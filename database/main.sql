@@ -1,4 +1,5 @@
 -- todo: handle the "updated_at" field as "ON UPDATE" clause is not available
+-- todo: add constraints on the matching between staff_type and staff id in appointments etc. tables
 CREATE TABLE patients (
   id NUMBER GENERATED AS IDENTITY,
   nric CHAR(9) UNIQUE NOT NULL,
@@ -59,7 +60,7 @@ CREATE TABLE payments (
   cashier_id NUMBER NOT NULL,
   consultation_id NUMBER NOT NULL,
   amount NUMBER(8,2) NOT NULL,
-  status NUMBER(1) NOT NULL,
+  status NUMBER(1) DEFAULT 0 NOT NULL,
   created_at DATE DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at DATE DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
