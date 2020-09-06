@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"time"
+
 	"github.com/yunpengn/CS5322-VPD/common/httpserver"
 	"github.com/yunpengn/CS5322-VPD/dto"
 )
@@ -10,5 +12,6 @@ func HealthCheck(request httpserver.ValidatedRequest) (interface{}, *httpserver.
 
 	return &dto.HealthResp{
 		Source: req.Source,
+		Timestamp: time.Now(),
 	}, nil
 }
