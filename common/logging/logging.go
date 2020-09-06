@@ -6,14 +6,17 @@ import (
 	"log"
 	"os"
 
+	"github.com/yunpengn/CS5322-VPD/common"
 	"github.com/yunpengn/CS5322-VPD/common/system"
 )
 
 type Logger struct {
 	logger *log.Logger
+	tag    string
 }
 
 const (
+	defaultFolder   = "logs/"
 	defaultLog      = "app.log"
 	defaultErrorLog = "err.log"
 )
@@ -23,16 +26,23 @@ var (
 	ErrWriter io.Writer
 )
 
+// Init initializes the logging module.
 func Init(mode system.Mode) {
 	if mode == system.Local {
 		LogWriter = os.Stdout
 		ErrWriter = os.Stderr
+		return
 	}
 
-	file, _ := os.Create(defaultLog)
+	// Creates the folder first.
+	if err := os.MkdirAll(defaultFolder, os.ModePerm); err != nil {
+		common.Panic("Unable to create folder %s due to err=%s", defaultFolder, err)
+	}
+
+	file, _ := os.Create(defaultFolder + defaultLog)
 	LogWriter = bufio.NewWriter(file)
 
-	file, _ = os.Create(defaultErrorLog)
+	file, _ = os.Create(defaultFolder + defaultErrorLog)
 	ErrWriter = bufio.NewWriter(file)
 }
 

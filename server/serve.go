@@ -3,9 +3,8 @@ package server
 import (
 	"net/http"
 
-	"github.com/yunpengn/CS5322-VPD/common/logging"
-
 	"github.com/yunpengn/CS5322-VPD/common/httpserver"
+	"github.com/yunpengn/CS5322-VPD/common/logging"
 	"github.com/yunpengn/CS5322-VPD/dto"
 	"github.com/yunpengn/CS5322-VPD/logic"
 )
