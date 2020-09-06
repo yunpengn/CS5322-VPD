@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/yunpengn/CS5322-VPD/common/httpserver"
+	"github.com/yunpengn/CS5322-VPD/common/logging"
 	"github.com/yunpengn/CS5322-VPD/dto"
 	"github.com/yunpengn/CS5322-VPD/logic"
 )
@@ -13,6 +14,9 @@ func Serve() {
 	// Loads the configuration and creates the server.
 	appConfig := LoadConfig()
 	server := httpserver.NewServer(appConfig.Mode, appConfig.Address)
+
+	// Initializes the logger.
+	logging.Init(appConfig.Mode)
 
 	// Registers all endpoints.
 	route(server)

@@ -5,6 +5,8 @@ import (
 	"io"
 	"log"
 	"os"
+
+	"github.com/yunpengn/CS5322-VPD/common/system"
 )
 
 type Logger struct {
@@ -21,7 +23,12 @@ var (
 	ErrWriter io.Writer
 )
 
-func init() {
+func Init(mode system.Mode) {
+	if mode == system.Local {
+		LogWriter = os.Stdout
+		ErrWriter = os.Stderr
+	}
+
 	file, _ := os.Create(defaultLog)
 	LogWriter = bufio.NewWriter(file)
 

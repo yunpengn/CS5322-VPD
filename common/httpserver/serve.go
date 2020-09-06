@@ -27,10 +27,8 @@ func NewServer(mode system.Mode, addr string) *Server {
 	gin.SetMode(toGinMode(mode))
 
 	// Redirects logging to files if not in development mode.
-	if mode != system.Local {
-		gin.DefaultWriter = logging.LogWriter
-		gin.DefaultErrorWriter = logging.ErrWriter
-	}
+	gin.DefaultWriter = logging.LogWriter
+	gin.DefaultErrorWriter = logging.ErrWriter
 
 	return &Server{
 		engine: gin.Default(),
@@ -45,6 +43,8 @@ func (s *Server) Serve(method string, path string, req ValidatedRequest, handler
 	reqType := reflect.ValueOf(req).Elem().Type()
 
 	s.engine.Handle(method, path, func(ctx *gin.Context) {
+		logger.Print("Received request for path=%s method=%s", path, method)
+
 		// Creates a new instance of the DTO object.
 		request := reflect.New(reqType).Interface().(ValidatedRequest)
 
