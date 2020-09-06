@@ -4,12 +4,13 @@ import (
 	"io/ioutil"
 
 	"github.com/yunpengn/CS5322-VPD/common"
+	"github.com/yunpengn/CS5322-VPD/common/system"
 )
 
 // AppConfig defines the structure of the application configuration.
 type AppConfig struct {
-	Address string `json:"port"`
-	Mode    string `json:"mode"`
+	Address string      `json:"address"`
+	Mode    system.Mode `json:"mode"`
 }
 
 const (

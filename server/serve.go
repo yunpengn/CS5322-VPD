@@ -1,26 +1,27 @@
 package server
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/yunpengn/CS5322-VPD/common"
+	"net/http"
+
+	"github.com/yunpengn/CS5322-VPD/common/httpserver"
+	"github.com/yunpengn/CS5322-VPD/dto"
+	"github.com/yunpengn/CS5322-VPD/logic"
 )
 
 // Serve starts the server and makes it ready for serving all traffic.
 func Serve() {
-	// Loads the configuration.
+	// Loads the configuration and creates the server.
 	appConfig := LoadConfig()
-	gin.SetMode(appConfig.Mode)
+	server := httpserver.NewServer(appConfig.Mode, appConfig.Address)
 
 	// Registers all endpoints.
-	router := gin.Default()
-	route(router)
+	route(server)
 
 	// Runs the server.
-	if err := router.Run(appConfig.Address); err != nil {
-		common.Panic("Unable to start server due to err=%s", err)
-	}
+	server.Start()
 }
 
 // route defines the routing configuration for all endpoints.
-func route(r *gin.Engine) {
+func route(s *httpserver.Server) {
+	s.Serve(http.MethodGet, "health", &dto.HealthReq{}, logic.HealthCheck)
 }
