@@ -9,6 +9,7 @@ var (
 	InvalidRequest    = register("C002")
 	MissingCredential = register("C003")
 	NoPermissionScope = register("C004")
+	NotFound          = register("C005")
 
 	// Sxxx stands for server error.
 	UnknownServerError = register("S001")

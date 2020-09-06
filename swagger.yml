@@ -13,7 +13,7 @@ info:
     name: Copyright © CS5322 Project
     url: http://www.nus.edu.sg/legal-information-notices
   version: 1.0.0
-  
+
 externalDocs:
   url: https://www.nus.edu.sg/
 
@@ -32,6 +32,30 @@ security:
 #                    Endpoints                   #
 ##################################################
 paths:
+  /appointments:
+    get:
+      summary: Gets the all future appointments of a patient
+      description: This endpoint allows a patient to view his/her appointments in the future.
+      tags:
+        - Appointment
+      responses:
+        200:
+          description: The appointments have been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentListResponse'
+        400:
+          $ref: '#/components/responses/InvalidRequestError'
+        401:
+          $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/UnknownServerError'
+
   /appointment:
     post:
       summary: Makes a new appointment
@@ -56,12 +80,14 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         401:
           $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
         500:
           $ref: '#/components/responses/UnknownServerError'
-    
+
     put:
       summary: Updates an existing appointment
-      description: This endpoint allows a receptionit to update a previously created appointment.
+      description: This endpoint allows a receptionist to update a previously created appointment.
       tags:
         - Appointment
       requestBody:
@@ -72,25 +98,128 @@ paths:
               $ref: '#/components/schemas/AppointmentUpdateRequest'
         required: true
       responses:
-        200:
-          description: A new appointment has been updated successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AppointmentUpdateResponse'
+        204:
+          description: An appointment has been updated successfully.
         400:
           $ref: '#/components/responses/InvalidRequestError'
         401:
           $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
         500:
           $ref: '#/components/responses/UnknownServerError'
-    
+
+  /appointment/{appointmentID}:
+    get:
+      summary: Gets the details of an appointment
+      description: This endpoint allows a patient to view his/her appointment.
+      tags:
+        - Appointment
+      parameters:
+        - name: appointmentID
+          in: path
+          description: The ID of the appointment to be deleted
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        200:
+          description: The given appointment has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentGetResponse'
+        400:
+          $ref: '#/components/responses/InvalidRequestError'
+        401:
+          $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/UnknownServerError'
+
+    delete:
+      summary: Deletes an existing appointment
+      description: This endpoint allows a receptionist to delete a previously created appointment.
+      tags:
+        - Appointment
+      parameters:
+        - name: appointmentID
+          in: path
+          description: The ID of the appointment to be deleted
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        204:
+          description: An appointment has been deleted successfully.
+        400:
+          $ref: '#/components/responses/InvalidRequestError'
+        401:
+          $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/UnknownServerError'
+
 
 ##################################################
 #                  Components                    #
 ##################################################
 components:
   schemas:
+    AppointmentGetResponse:
+      type: object
+      properties:
+        appointmentID:
+          type: number
+          format: int64
+        patientID:
+          type: number
+          format: int64
+        doctorID:
+          type: number
+          format: int64
+        time:
+          type: string
+          format: datetime
+      example:
+        appointmentID: 9845
+        patientID: 112
+        doctorID: 45
+        time: 2020-08-11 14:54
+
+    AppointmentListResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          appointmentID:
+            type: number
+            format: int64
+          patientID:
+            type: number
+            format: int64
+          doctorID:
+            type: number
+            format: int64
+          time:
+            type: string
+            format: datetime
+      example:
+        - appointmentID: 9845
+          patientID: 112
+          doctorID: 45
+          time: 2020-08-11 14:54
+
     AppointmentCreateRequest:
       type: object
       properties:
@@ -111,7 +240,7 @@ components:
         patientID: 112
         doctorID: 45
         time: 2020-08-11 14:54
-    
+
     AppointmentCreateResponse:
       type: object
       properties:
@@ -120,7 +249,7 @@ components:
           format: int64
       example:
         appointmentID: 9845
-    
+
     AppointmentUpdateRequest:
       type: object
       properties:
@@ -141,15 +270,6 @@ components:
         appointmentID: 2894
         doctorID: 45
         time: 2020-08-11 14:54
-    
-    AppointmentUpdateResponse:
-      type: object
-      properties:
-        appointmentID:
-          type: number
-          format: int64
-      example:
-        appointmentID: 9845
 
   responses:
     InvalidRequestError:
@@ -171,7 +291,7 @@ components:
               errCode: C002
               reasons:
                 - Invalid parameter provided
-    
+
     MissingCredentialError:
       description: The request could not be completed because authentication token is missing.
       content:
@@ -212,6 +332,26 @@ components:
               reasons:
                 - No permission scope
 
+    NotFoundError:
+      description: The requested resource could not be found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+              reasons:
+                type: array
+                items:
+                  type: string
+            required:
+              - reasons
+            example:
+              errCode: C005
+              reasons:
+                - Not found
+
     UnknownServerError:
       description: The server is unable to serve the request at the moment. Please try again later.
       content:
@@ -231,7 +371,7 @@ components:
               errCode: S001
               reasons:
                 - Unknown server error
-  
+
   securitySchemes:
     jwt-token:
       type: http
