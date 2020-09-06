@@ -1,20 +1,14 @@
 package httpserver
 
 import (
-	"bufio"
 	"net/http"
-	"os"
 	"reflect"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/yunpengn/CS5322-VPD/common"
+	"github.com/yunpengn/CS5322-VPD/common/logging"
 	"github.com/yunpengn/CS5322-VPD/common/system"
-)
-
-const (
-	defaultLog      = "gin.log"
-	defaultErrorLog = "gin.error.log"
 )
 
 // Server defines the standard HTTP server object.
@@ -34,11 +28,8 @@ func NewServer(mode system.Mode, addr string) *Server {
 
 	// Redirects logging to files if not in development mode.
 	if mode != system.Local {
-		file, _ := os.Create(defaultLog)
-		gin.DefaultWriter = bufio.NewWriter(file)
-
-		file, _ = os.Create(defaultErrorLog)
-		gin.DefaultErrorWriter = bufio.NewWriter(file)
+		gin.DefaultWriter = logging.LogWriter
+		gin.DefaultErrorWriter = logging.ErrWriter
 	}
 
 	return &Server{
