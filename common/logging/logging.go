@@ -22,8 +22,9 @@ const (
 )
 
 var (
-	LogWriter io.Writer
-	ErrWriter io.Writer
+	DefaultLogger *log.Logger
+	LogWriter     io.Writer
+	ErrWriter     io.Writer
 )
 
 // Init initializes the logging module.
@@ -31,29 +32,31 @@ func Init(mode system.Mode) {
 	if mode == system.Local {
 		LogWriter = os.Stdout
 		ErrWriter = os.Stderr
-		return
+	} else {
+		// Creates the folder first.
+		if err := os.MkdirAll(defaultFolder, os.ModePerm); err != nil {
+			common.Panic("Unable to create folder %s due to err=%s", defaultFolder, err)
+		}
+
+		file, _ := os.Create(defaultFolder + defaultLog)
+		LogWriter = bufio.NewWriter(file)
+
+		file, _ = os.Create(defaultFolder + defaultErrorLog)
+		ErrWriter = bufio.NewWriter(file)
 	}
 
-	// Creates the folder first.
-	if err := os.MkdirAll(defaultFolder, os.ModePerm); err != nil {
-		common.Panic("Unable to create folder %s due to err=%s", defaultFolder, err)
-	}
-
-	file, _ := os.Create(defaultFolder + defaultLog)
-	LogWriter = bufio.NewWriter(file)
-
-	file, _ = os.Create(defaultFolder + defaultErrorLog)
-	ErrWriter = bufio.NewWriter(file)
+	// Creates the default singleton logger.
+	DefaultLogger = log.New(LogWriter, "", log.LstdFlags)
 }
 
 // NewLogger creates a new logger.
 func NewLogger(tag string) *Logger {
 	return &Logger{
-		logger: log.New(LogWriter, tag, log.LstdFlags),
+		tag: tag,
 	}
 }
 
 // Print prints a new line of log message.
 func (l *Logger) Print(format string, obj ...interface{}) {
-	l.logger.Printf(format+"\n", obj...)
+	DefaultLogger.Printf(l.tag+" | "+format+"\n", obj...)
 }
