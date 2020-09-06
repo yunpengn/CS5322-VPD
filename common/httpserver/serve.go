@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/yunpengn/CS5322-VPD/common"
+	"github.com/yunpengn/CS5322-VPD/common/errors"
 	"github.com/yunpengn/CS5322-VPD/common/logging"
 	"github.com/yunpengn/CS5322-VPD/common/system"
 )
@@ -51,15 +52,17 @@ func (s *Server) Serve(method string, path string, req ValidatedRequest, handler
 		// Binds the request to the given DTO object.
 		if err := ctx.ShouldBindWith(request, toBindingType(method)); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, &Error{
+				Code:    errors.CannotUnmarshal,
 				Reasons: []error{err},
 			})
 			return
 		}
 
 		// Validates the incoming request.
-		if errors := request.GetErrors(); errors != nil && len(errors) != 0 {
+		if err := request.GetErrors(); err != nil && len(err) != 0 {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, &Error{
-				Reasons: errors,
+				Code:    errors.InvalidRequest,
+				Reasons: err,
 			})
 			return
 		}

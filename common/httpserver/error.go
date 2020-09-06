@@ -3,13 +3,15 @@ package httpserver
 import (
 	"encoding/json"
 	"strings"
+
+	"github.com/yunpengn/CS5322-VPD/common/errors"
 )
 
 // Error defines a common format for error response in any HTTP server.
 type Error struct {
-	ErrCode    int     `json:"errCode"`
-	HttpStatus int     `json:"-"`
-	Reasons    []error `json:"reasons"`
+	Code       errors.ErrorCode `json:"errCode"`
+	HttpStatus int              `json:"-"`
+	Reasons    []error          `json:"reasons"`
 }
 
 // Error implements the error interface.
@@ -29,10 +31,10 @@ func (e *Error) MarshalJSON() ([]byte, error) {
 	}
 
 	return json.Marshal(&struct {
-		ErrCode int      `json:"errCode"`
-		Reasons []string `json:"reasons"`
+		Code    errors.ErrorCode `json:"errCode"`
+		Reasons []string         `json:"reasons"`
 	}{
-		ErrCode: e.ErrCode,
+		Code:    e.Code,
 		Reasons: reasons,
 	})
 }
