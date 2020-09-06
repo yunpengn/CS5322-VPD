@@ -170,6 +170,89 @@ paths:
         500:
           $ref: '#/components/responses/UnknownServerError'
 
+  /consultation:
+    post:
+      summary: Initiates a new consultation
+      description: This endpoint allows a receptionist to arrange a new consultation.
+      tags:
+        - Consultation
+      requestBody:
+        description: Request body for consultation create endpoint.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsultationCreateRequest'
+        required: true
+      responses:
+        200:
+          description: A new consultation has been created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationCreateResponse'
+        400:
+          $ref: '#/components/responses/InvalidRequestError'
+        401:
+          $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
+        500:
+          $ref: '#/components/responses/UnknownServerError'
+
+  /consultation/complete:
+    post:
+      summary: Completes consultation
+      description: This endpoint allows a doctor to complete consultation.
+      tags:
+        - Consultation
+      requestBody:
+        description: Request body for consultation complete endpoint.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsultationCompleteRequest'
+        required: true
+      responses:
+        204:
+          description: A consultation has been marked as complete.
+        400:
+          $ref: '#/components/responses/InvalidRequestError'
+        401:
+          $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/UnknownServerError'
+
+  /payment:
+    post:
+      summary: Completes payment for a consultation
+      description: This endpoint allows a receptionist to process a payment
+      tags:
+        - Payment
+      requestBody:
+        description: Request body for payment endpoint.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+        required: true
+      responses:
+        204:
+          description: The payment has been completed.
+        400:
+          $ref: '#/components/responses/InvalidRequestError'
+        401:
+          $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/UnknownServerError'
+
 
 ##################################################
 #                  Components                    #
@@ -270,6 +353,56 @@ components:
         appointmentID: 2894
         doctorID: 45
         time: 2020-08-11 14:54
+
+    ConsultationCreateRequest:
+      type: object
+      properties:
+        appointmentID:
+          type: number
+          format: int64
+        patientID:
+          type: number
+          format: int64
+        doctorID:
+          type: number
+          format: int64
+      required:
+        - patientID
+        - doctorID
+        - timeStart
+      example:
+        patientID: 112
+        doctorID: 45
+
+    ConsultationCreateResponse:
+      type: object
+      properties:
+        consultationID:
+          type: number
+          format: int64
+      example:
+        consultationID: 3986
+
+    ConsultationCompleteRequest:
+      type: object
+      properties:
+        consultationID:
+          type: number
+          format: int64
+        notes:
+          type: string
+      example:
+        consultationID: 3986
+        notes: Have done basic evaluation, and decided to refer patient to SGH.
+
+    PaymentRequest:
+      type: object
+      properties:
+        consultationID:
+          type: number
+          format: int64
+      example:
+        consultationID: 3986
 
   responses:
     InvalidRequestError:
