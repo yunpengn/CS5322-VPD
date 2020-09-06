@@ -5,13 +5,13 @@ openapi: 3.0.0
 info:
   title: CS5322 Project 1
   description: OAS 3.0 specifications for backend API endpoints that empower our project in CS5322 Database Security.
-  termsOfService: http://www.nus.edu.sg
+  termsOfService: http://www.nus.edu.sg/legal-information-notices
   contact:
     name: CS5322 Project Team
     email: neilniuyunpeng@gmail.com
   license:
-    name: Copyright © CS5322 Project
-    url: http://www.nus.edu.sg/legal-information-notices
+    name: GNU General Public Licence 3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.html
   version: 1.0.0
 
 externalDocs:
@@ -34,7 +34,7 @@ security:
 paths:
   /appointments:
     get:
-      summary: Gets the all future appointments of a patient
+      summary: Gets the all future appointments of current patient
       description: This endpoint allows a patient to view his/her appointments in the future.
       tags:
         - Appointment
@@ -170,6 +170,30 @@ paths:
         500:
           $ref: '#/components/responses/UnknownServerError'
 
+  /consultations:
+    get:
+      summary: Gets all consultations so far of current patient
+      description: This endpoint allows a patient to view his/her consultations.
+      tags:
+        - Consultation
+      responses:
+        200:
+          description: The consultations have been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationListResponse'
+        400:
+          $ref: '#/components/responses/InvalidRequestError'
+        401:
+          $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/UnknownServerError'
+
   /consultation:
     post:
       summary: Initiates a new consultation
@@ -226,7 +250,71 @@ paths:
         500:
           $ref: '#/components/responses/UnknownServerError'
 
+  /consultation/{consultationID}:
+    get:
+      summary: Gets the details of a consultation
+      description: This endpoint allows a patient to view his/her consultation.
+      tags:
+        - Consultation
+      parameters:
+        - name: consultationID
+          in: path
+          description: The ID of the consultation to be retrieved
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        200:
+          description: The given consultation has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationGetResponse'
+        400:
+          $ref: '#/components/responses/InvalidRequestError'
+        401:
+          $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/UnknownServerError'
+
   /payment:
+    get:
+      summary: Gets the details of a payment for consultation
+      description: This endpoint allows a patient to view his/her payment to a consultation.
+      tags:
+        - Payment
+      parameters:
+        - name: consultationID
+          in: query
+          description: The consultation ID of the payment to be retrieved
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        200:
+          description: The given payment has been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentGetResponse'
+        400:
+          $ref: '#/components/responses/InvalidRequestError'
+        401:
+          $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/UnknownServerError'
+
+  /payment/complete:
     post:
       summary: Completes payment for a consultation
       description: This endpoint allows a receptionist to process a payment
@@ -237,7 +325,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PaymentRequest'
+              $ref: '#/components/schemas/PaymentCompleteRequest'
         required: true
       responses:
         204:
@@ -253,6 +341,37 @@ paths:
         500:
           $ref: '#/components/responses/UnknownServerError'
 
+  /records:
+    get:
+      summary: Gets the medical records of a consultation
+      description: This endpoint allows a patient to view his/her medical records associated with a consultation.
+      tags:
+        - Record
+      parameters:
+        - name: consultationID
+          in: query
+          description: The consultation ID of the records to be retrieved
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        200:
+          description: Records have been retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordListResponse'
+        400:
+          $ref: '#/components/responses/InvalidRequestError'
+        401:
+          $ref: '#/components/responses/MissingCredentialError'
+        403:
+          $ref: '#/components/responses/NoPermissionError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/UnknownServerError'
 
 ##################################################
 #                  Components                    #
@@ -354,6 +473,33 @@ components:
         doctorID: 45
         time: 2020-08-11 14:54
 
+    ConsultationListResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          ConsultationID:
+            type: number
+            format: int64
+          patientID:
+            type: number
+            format: int64
+          doctorID:
+            type: number
+            format: int64
+          timeStart:
+            type: string
+            format: datetime
+          timeEnd:
+            type: string
+            format: datetime
+      example:
+        - consultationID: 3195
+          patientID: 112
+          doctorID: 45
+          timeStart: 2020-08-11 14:54
+          timeEnd: 2020-08-11 15:21
+
     ConsultationCreateRequest:
       type: object
       properties:
@@ -389,13 +535,57 @@ components:
         consultationID:
           type: number
           format: int64
+        amount:
+          type: string
         notes:
           type: string
       example:
         consultationID: 3986
+        amount: 100.5
         notes: Have done basic evaluation, and decided to refer patient to SGH.
 
-    PaymentRequest:
+    ConsultationGetResponse:
+      type: object
+      properties:
+        consultationID:
+          type: number
+          format: int64
+        patientID:
+          type: number
+          format: int64
+        doctorID:
+          type: number
+          format: int64
+        timeStart:
+          type: string
+          format: datetime
+        timeEnd:
+          type: string
+          format: datetime
+      example:
+        - consultationID: 9235
+          patientID: 112
+          doctorID: 45
+          timeStart: 2020-08-11 14:54
+          timeEnd: 2020-08-11 15:21
+
+    PaymentGetResponse:
+      type: object
+      properties:
+        paymentID:
+          type: number
+          format: int64
+        amount:
+          type: string
+        consultationID:
+          type: number
+          format: int64
+      example:
+        - paymentID: 9382
+          amount: 15.98
+          consultationID: 9235
+
+    PaymentCompleteRequest:
       type: object
       properties:
         consultationID:
@@ -404,6 +594,22 @@ components:
       example:
         consultationID: 3986
 
+    RecordListResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          recordID:
+            type: number
+            format: int64
+          recordType:
+            type: string
+          results:
+            type: string
+      example:
+        - recordID: 1239
+          recordType: X-ray
+          results: Normal, did not observe any anomaly
   responses:
     InvalidRequestError:
       description: The provided request parameter(s) and/or body is invalid.
