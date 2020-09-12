@@ -27,3 +27,5 @@ INSERT INTO APP_ADMIN.RECORDS (CONSULTATION_ID, RECORD_TYPE, RESULTS)
 VALUES (1, 'X-ray', 'Healthy lungs');
 
 COMMIT;
+
+-- Adds the corresponding database users.
