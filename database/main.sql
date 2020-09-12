@@ -1,5 +1,15 @@
 -- todo: handle the "updated_at" field as "ON UPDATE" clause is not available
 -- todo: add constraints on the matching between staff_type and staff id in appointments etc. tables
+
+-- Drops all existing tables.
+DROP TABLE patients;
+DROP TABLE staff;
+DROP TABLE appointments;
+DROP TABLE consultations;
+DROP TABLE payments;
+DROP TABLE records;
+
+-- Creates new tables.
 CREATE TABLE patients (
   id NUMBER GENERATED AS IDENTITY,
   nric CHAR(9) UNIQUE NOT NULL,
@@ -11,7 +21,7 @@ CREATE TABLE patients (
   created_at DATE DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at DATE DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id)
-)
+);
 
 CREATE TABLE staff (
   id NUMBER GENERATED AS IDENTITY,
@@ -21,7 +31,7 @@ CREATE TABLE staff (
   created_at DATE DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at DATE DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id)
-)
+);
 
 CREATE TABLE appointments (
   id NUMBER GENERATED AS IDENTITY,
@@ -35,7 +45,7 @@ CREATE TABLE appointments (
   FOREIGN KEY (patient_id) REFERENCES patients(id),
   FOREIGN KEY (doctor_id) REFERENCES staff(id),
   FOREIGN KEY (receptionist_id) REFERENCES staff(id)
-)
+);
 
 CREATE TABLE consultations (
   id NUMBER GENERATED AS IDENTITY,
@@ -53,7 +63,7 @@ CREATE TABLE consultations (
   FOREIGN KEY (doctor_id) REFERENCES staff(id),
   FOREIGN KEY (receptionist_id) REFERENCES staff(id),
   FOREIGN KEY (appointment_id) REFERENCES appointments(id)
-)
+);
 
 CREATE TABLE payments (
   id NUMBER GENERATED AS IDENTITY,
@@ -66,7 +76,7 @@ CREATE TABLE payments (
   PRIMARY KEY (id),
   FOREIGN KEY (cashier_id) REFERENCES staff(id),
   FOREIGN KEY (consultation_id) REFERENCES consultations(id)
-)
+);
 
 CREATE TABLE records (
   id NUMBER GENERATED AS IDENTITY,
@@ -77,4 +87,4 @@ CREATE TABLE records (
   updated_at DATE DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (consultation_id) REFERENCES consultations(id)
-)
+);
