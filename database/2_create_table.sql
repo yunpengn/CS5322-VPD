@@ -24,6 +24,7 @@ CREATE TABLE patients (
 CREATE TABLE staff (
   user_name  VARCHAR(80),
   first_name VARCHAR(80) NOT NULL,
+  last_name  VARCHAR(80) NOT NULL,
   gender     NUMBER(1)   NOT NULL,
   staff_type VARCHAR(12) NOT NULL,
   created_at DATE        DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -66,7 +67,7 @@ CREATE TABLE consultations (
 
 CREATE TABLE payments (
   id              NUMBER        GENERATED AS IDENTITY,
-  cashier_name    NUMBER        NOT NULL,
+  cashier_name    VARCHAR(80)   NOT NULL,
   consultation_id NUMBER        NOT NULL,
   amount          NUMBER(8,2)   NOT NULL,
   status          VARCHAR(10)   DEFAULT 'unpaid' NOT NULL,
@@ -89,3 +90,20 @@ CREATE TABLE records (
   FOREIGN KEY (consultation_id) REFERENCES consultations(id),
   CHECK ( record_type IN ('X-ray', 'MRI') )
 );
+
+-- Uses some triggers to define data constraints.
+CREATE OR REPLACE trigger check_appointments_staff BEFORE insert OR update ON appointments
+    REFERENCING NEW AS new_row FOR EACH ROW
+DECLARE
+    v_role VARCHAR(12);
+BEGIN
+    SELECT staff_type INTO v_role FROM staff WHERE user_name = new_row.doctor_name;
+    IF v_role <> 'doctor' THEN
+        RAISE_APPLICATION_ERROR(10001, 'appointments.doctor_name is not a doctor');
+    END IF;
+
+    SELECT staff_type INTO v_role FROM staff WHERE user_name = new_row.receptionist_name;
+    IF v_role <> 'receptionist' THEN
+        RAISE_APPLICATION_ERROR(10002, 'appointments.receptionist_name is not a receptionist');
+    END IF;
+END;
