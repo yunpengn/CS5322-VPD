@@ -25,11 +25,12 @@ CREATE TABLE staff (
   user_name  VARCHAR(80),
   first_name VARCHAR(80) NOT NULL,
   last_name  VARCHAR(80) NOT NULL,
-  gender     NUMBER(1)   NOT NULL,
+  gender     VARCHAR(6)   NOT NULL,
   staff_type VARCHAR(12) NOT NULL,
   created_at DATE        DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at DATE        DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (user_name),
+  CHECK ( gender IN ('male', 'female') ),
   CHECK ( staff_type IN ('doctor', 'receptionist', 'cashier') )
 );
 
