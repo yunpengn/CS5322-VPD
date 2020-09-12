@@ -1,8 +1,5 @@
 -- todo: handle the "updated_at" field as "ON UPDATE" clause is not available
 
--- Switches to the correct user.
-connect app_admin;
-
 -- Creates new tables.
 CREATE TABLE patients (
   user_name  VARCHAR(80),
