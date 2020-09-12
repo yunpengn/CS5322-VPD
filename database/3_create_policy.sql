@@ -7,7 +7,7 @@ CREATE OR REPLACE package app_pkg is
         user_name := SYS_CONTEXT('userenv', 'SESSION_USER');
         DBMS_SESSION.SET_CONTEXT('app_ctx', 'user_name', user_name);
 
-        SELECT STAFF_TYPE INTO user_role FROM STAFF WHERE USER_NAME = user_name;
+        SELECT role_type INTO user_role FROM users WHERE USER_NAME = user_name;
         DBMS_SESSION.SET_CONTEXT('app_ctx', 'user_role', user_role);
     END;
 END;

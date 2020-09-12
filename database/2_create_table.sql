@@ -84,8 +84,8 @@ DECLARE
     v_role VARCHAR(12);
 BEGIN
     SELECT role_type INTO v_role FROM users WHERE user_name = :NEW.PATIENT_NAME;
-    IF v_role <> 'doctor' THEN
-        RAISE_APPLICATION_ERROR(10001, 'appointments.patient_name is not a patient');
+    IF v_role <> 'patient' THEN
+        RAISE_APPLICATION_ERROR(10000, 'appointments.patient_name is not a patient');
     END IF;
 
     SELECT role_type INTO v_role FROM users WHERE user_name = :NEW.DOCTOR_NAME;
@@ -105,7 +105,7 @@ DECLARE
 BEGIN
     SELECT role_type INTO v_role FROM users WHERE user_name = :NEW.PATIENT_NAME;
     IF v_role <> 'doctor' THEN
-        RAISE_APPLICATION_ERROR(10001, 'consultations.patient_name is not a patient');
+        RAISE_APPLICATION_ERROR(20000, 'consultations.patient_name is not a patient');
     END IF;
 
     SELECT role_type INTO v_role FROM users WHERE user_name = :NEW.DOCTOR_NAME;
