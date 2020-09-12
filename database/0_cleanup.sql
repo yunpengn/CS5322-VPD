@@ -1,6 +1,9 @@
 -- Kills all active connections.
-SELECT SID, SERIAL# FROM V$SESSION WHERE USERNAME = 'APP_ADMIN';
-ALTER SYSTEM KILL SESSION '72, 60140';
+BEGIN
+    FOR r IN (select sid, serial# from v$session where username = 'APP_ADMIN') LOOP
+        EXECUTE IMMEDIATE 'alter system kill session ''' || r.sid  || ','  || r.serial# || ''' immediate';
+    END LOOP;
+END;
 
 -- Drops existing user & records.
 DROP USER app_admin CASCADE;
