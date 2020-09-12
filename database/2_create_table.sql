@@ -60,6 +60,7 @@ CREATE TABLE payments (
   created_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
+  UNIQUE      (consultation_id),
   FOREIGN KEY (cashier_name)    REFERENCES users(user_name),
   FOREIGN KEY (consultation_id) REFERENCES consultations(id),
   CHECK       (status IN ('unpaid', 'paid', 'refunded'))
