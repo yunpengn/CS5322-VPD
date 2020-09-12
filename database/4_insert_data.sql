@@ -1,18 +1,18 @@
 -- Inserts sample data.
 INSERT INTO APP_ADMIN.USERS (USER_NAME, NRIC, ROLE_TYPE, FIRST_NAME, LAST_NAME, DOB, GENDER, PHONE, ADDRESS)
-VALUES ('hengd', 's4736343h', 'Ding Heng', 'Lim', '13/11/1992', 'male', '85556669', '20 Heng Mui Keng Terrace');
+VALUES ('hengd', 'S4736343H', 'patient', 'Ding Heng', 'Lim', '13/11/1992', 'male', '85556669', '20 Heng Mui Keng Terrace');
 
 INSERT INTO APP_ADMIN.USERS (USER_NAME, NRIC, ROLE_TYPE, FIRST_NAME, LAST_NAME, DOB, GENDER, PHONE, ADDRESS)
-VALUES ('sean', 's6173429e', 'Sean', 'Yap', '20/08/1994', 'male', '94273148', '357 Pasir Panjang Rd');
+VALUES ('sean', 'S6173429E', 'patient', 'Sean', 'Yap', '20/08/1994', 'male', '94273148', '357 Pasir Panjang Rd');
 
 INSERT INTO APP_ADMIN.USERS (USER_NAME, NRIC, ROLE_TYPE, FIRST_NAME, LAST_NAME, GENDER)
-VALUES ('hugh', 'doctor', 'Hugh', 'Anderson', 'male');
+VALUES ('hugh', 'S1895867A', 'doctor', 'Hugh', 'Anderson', 'male');
 
 INSERT INTO APP_ADMIN.USERS (USER_NAME, NRIC, ROLE_TYPE, FIRST_NAME, LAST_NAME, GENDER)
-VALUES ('chris', 'receptionist', 'Christina', 'Carbunaru', 'female');
+VALUES ('chris', 'A0493891F', 'receptionist', 'Christina', 'Carbunaru', 'female');
 
 INSERT INTO APP_ADMIN.USERS (USER_NAME, NRIC, ROLE_TYPE, FIRST_NAME, LAST_NAME, GENDER)
-VALUES ('steve', 'cashier', 'Steven', 'Halim', 'male');
+VALUES ('steve', 'H1970941X', 'cashier', 'Steven', 'Halim', 'male');
 
 INSERT INTO APP_ADMIN.APPOINTMENTS (PATIENT_NAME, DOCTOR_NAME, RECEPTIONIST_NAME, TIME)
 VALUES ('hengd', 'hugh', 'chris', TO_DATE('07/09/2020 10:30', 'DD/MM/YYYY HH:MI'));
