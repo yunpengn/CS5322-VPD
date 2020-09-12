@@ -9,23 +9,25 @@ CREATE TABLE patients (
   first_name VARCHAR(80)  NOT NULL,
   last_name  VARCHAR(80)  NOT NULL,
   dob        DATE         NOT NULL,
-  gender     NUMBER(1)    NOT NULL,
+  gender     VARCHAR(6)   NOT NULL,
   phone      CHAR(8)      NOT NULL,
   address    VARCHAR(100) NOT NULL,
   created_at DATE         DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at DATE         DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (user_name),
-  UNIQUE (nric)
+  UNIQUE (nric),
+  CHECK ( gender IN ('male', 'female') )
 );
 
 CREATE TABLE staff (
   user_name  VARCHAR(80),
   first_name VARCHAR(80) NOT NULL,
   gender     NUMBER(1)   NOT NULL,
-  staff_type NUMBER(1)   NOT NULL,
+  staff_type VARCHAR(12) NOT NULL,
   created_at DATE        DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at DATE        DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  PRIMARY KEY (user_name)
+  PRIMARY KEY (user_name),
+  CHECK ( staff_type IN ('doctor', 'receptionist', 'cashier') )
 );
 
 CREATE TABLE appointments (
@@ -65,7 +67,7 @@ CREATE TABLE payments (
   cashier_name    NUMBER        NOT NULL,
   consultation_id NUMBER        NOT NULL,
   amount          NUMBER(8,2)   NOT NULL,
-  status          NUMBER(1)     DEFAULT 0 NOT NULL,
+  is_paid         BOOLEAN       DEFAULT 0 NOT NULL,
   created_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
@@ -76,10 +78,11 @@ CREATE TABLE payments (
 CREATE TABLE records (
   id              NUMBER        GENERATED AS IDENTITY,
   consultation_id NUMBER        NOT NULL,
-  record_type     NUMBER(2)     NOT NULL,
+  record_type     VARCHAR(10)   NOT NULL,
   results         VARCHAR(200)  NOT NULL,
   created_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (consultation_id) REFERENCES consultations(id)
+  FOREIGN KEY (consultation_id) REFERENCES consultations(id),
+  CHECK ( record_type IN ('X-ray', 'MRI') )
 );
