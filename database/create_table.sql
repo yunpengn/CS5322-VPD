@@ -1,15 +1,8 @@
 -- todo: handle the "updated_at" field as "ON UPDATE" clause is not available
 -- todo: add constraints on the matching between staff_type and staff id in appointments etc. tables
 
--- Drops all existing tables.
-DROP TABLE patients;
-DROP TABLE staff;
-DROP TABLE appointments;
-DROP TABLE consultations;
-DROP TABLE payments;
-DROP TABLE records;
-
 -- Creates new tables.
+
 CREATE TABLE patients (
   id NUMBER GENERATED AS IDENTITY,
   nric CHAR(9) UNIQUE NOT NULL,
