@@ -25,3 +25,5 @@ VALUES ('steve', 1, 58.89, 'unpaid');
 
 INSERT INTO APP_ADMIN.RECORDS (CONSULTATION_ID, RECORD_TYPE, RESULTS)
 VALUES (1, 'X-ray', 'Healthy lungs');
+
+COMMIT;
