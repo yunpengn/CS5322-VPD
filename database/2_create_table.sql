@@ -1,8 +1,10 @@
 -- todo: handle the "updated_at" field as "ON UPDATE" clause is not available
 -- todo: add constraints on the matching between staff_type and staff id in appointments etc. tables
 
--- Creates new tables.
+-- Switches to the correct user.
+connect app_admin;
 
+-- Creates new tables.
 CREATE TABLE patients (
   user_name  VARCHAR(80),
   nric       CHAR(9)      NOT NULL,
@@ -67,12 +69,13 @@ CREATE TABLE payments (
   cashier_name    NUMBER        NOT NULL,
   consultation_id NUMBER        NOT NULL,
   amount          NUMBER(8,2)   NOT NULL,
-  is_paid         BOOLEAN       DEFAULT 0 NOT NULL,
+  status          VARCHAR(10)   DEFAULT 'unpaid' NOT NULL,
   created_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (cashier_name)    REFERENCES staff(user_name),
-  FOREIGN KEY (consultation_id) REFERENCES consultations(id)
+  FOREIGN KEY (consultation_id) REFERENCES consultations(id),
+  CHECK ( status IN ('unpaid', 'paid', 'refunded') )
 );
 
 CREATE TABLE records (
