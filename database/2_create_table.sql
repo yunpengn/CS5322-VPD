@@ -1,5 +1,4 @@
 -- todo: handle the "updated_at" field as "ON UPDATE" clause is not available
--- todo: add constraints on the matching between staff_type and staff id in appointments etc. tables
 
 -- Switches to the correct user.
 connect app_admin;
@@ -93,18 +92,42 @@ CREATE TABLE records (
 );
 
 -- Uses some triggers to define data constraints.
-CREATE OR REPLACE trigger check_appointments_staff BEFORE insert OR update ON appointments
-    REFERENCING NEW AS new_row FOR EACH ROW
+CREATE OR REPLACE trigger check_appointments_staff BEFORE insert OR update ON appointments FOR EACH ROW
 DECLARE
     v_role VARCHAR(12);
 BEGIN
-    SELECT staff_type INTO v_role FROM staff WHERE user_name = new_row.doctor_name;
+    SELECT staff_type INTO v_role FROM staff WHERE user_name = :NEW.DOCTOR_NAME;
     IF v_role <> 'doctor' THEN
         RAISE_APPLICATION_ERROR(10001, 'appointments.doctor_name is not a doctor');
     END IF;
 
-    SELECT staff_type INTO v_role FROM staff WHERE user_name = new_row.receptionist_name;
+    SELECT staff_type INTO v_role FROM staff WHERE user_name = :NEW.RECEPTIONIST_NAME;
     IF v_role <> 'receptionist' THEN
         RAISE_APPLICATION_ERROR(10002, 'appointments.receptionist_name is not a receptionist');
+    END IF;
+END;
+
+CREATE OR REPLACE trigger check_consultations_staff BEFORE insert OR update ON consultations FOR EACH ROW
+DECLARE
+    v_role VARCHAR(12);
+BEGIN
+    SELECT staff_type INTO v_role FROM staff WHERE user_name = :NEW.DOCTOR_NAME;
+    IF v_role <> 'doctor' THEN
+        RAISE_APPLICATION_ERROR(20001, 'consultations.doctor_name is not a doctor');
+    END IF;
+
+    SELECT staff_type INTO v_role FROM staff WHERE user_name = :NEW.RECEPTIONIST_NAME;
+    IF v_role <> 'receptionist' THEN
+        RAISE_APPLICATION_ERROR(20002, 'consultations.receptionist_name is not a receptionist');
+    END IF;
+END;
+
+CREATE OR REPLACE trigger check_payments_staff BEFORE insert OR update ON payments FOR EACH ROW
+DECLARE
+    v_role VARCHAR(12);
+BEGIN
+    SELECT staff_type INTO v_role FROM staff WHERE user_name = :NEW.CASHIER_NAME;
+    IF v_role <> 'cashier' THEN
+        RAISE_APPLICATION_ERROR(30003, 'payments.cashier_name is not a doctor');
     END IF;
 END;
