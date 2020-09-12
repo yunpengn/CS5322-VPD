@@ -104,7 +104,7 @@ DECLARE
     v_role VARCHAR(12);
 BEGIN
     SELECT role_type INTO v_role FROM users WHERE user_name = :NEW.PATIENT_NAME;
-    IF v_role <> 'doctor' THEN
+    IF v_role <> 'patient' THEN
         RAISE_APPLICATION_ERROR(20000, 'consultations.patient_name is not a patient');
     END IF;
 
