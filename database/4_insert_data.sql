@@ -1,9 +1,9 @@
 -- Inserts sample data.
 INSERT INTO APP_ADMIN.PATIENTS (USER_NAME, NRIC, FIRST_NAME, LAST_NAME, DOB, GENDER, PHONE, ADDRESS)
-VALUES ('hengd', 's4736343h', 'Ding Heng', 'Lim', '13/11/1992', 1, '85556669', '20 Heng Mui Keng Terrace');
+VALUES ('hengd', 's4736343h', 'Ding Heng', 'Lim', '13/11/1992', 'male', '85556669', '20 Heng Mui Keng Terrace');
 
 INSERT INTO APP_ADMIN.PATIENTS (USER_NAME, NRIC, FIRST_NAME, LAST_NAME, DOB, GENDER, PHONE, ADDRESS)
-VALUES ('sean', 's6173429e', 'Sean', 'Yap', '20/08/1994', 1, '94273148', '357 Pasir Panjang Rd');
+VALUES ('sean', 's6173429e', 'Sean', 'Yap', '20/08/1994', 'male', '94273148', '357 Pasir Panjang Rd');
 
 INSERT INTO APP_ADMIN.STAFF (USER_NAME, FIRST_NAME, LAST_NAME, GENDER, STAFF_TYPE)
 VALUES ('hugh', 'Hugh', 'Anderson', 'male', 'doctor');
