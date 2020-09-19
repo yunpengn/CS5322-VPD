@@ -35,5 +35,4 @@ CREATE USER hugh  IDENTIFIED BY hugh;
 CREATE USER chris IDENTIFIED BY chris;
 CREATE USER steve IDENTIFIED BY steve;
 
-GRANT CREATE SESSION TO hengd, sean, hugh, chris, steve;
-GRANT CONNECT, RESOURCE TO hengd, sean, hugh, chris, steve;
+GRANT CREATE SESSION, CONNECT, RESOURCE TO hengd, sean, hugh, chris, steve;
