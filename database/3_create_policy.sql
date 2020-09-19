@@ -8,7 +8,7 @@ CREATE OR REPLACE package body app_pkg is
         v_user_name VARCHAR(80);
         v_user_role VARCHAR(12);
     BEGIN
-        v_user_name := SYS_CONTEXT('userenv', 'SESSION_USER');
+        v_user_name := LOWER(SYS_CONTEXT('userenv', 'SESSION_USER'));
         DBMS_SESSION.SET_CONTEXT('app_ctx', 'user_name', v_user_name);
 
         IF v_user_name = 'APP_ADMIN' THEN
