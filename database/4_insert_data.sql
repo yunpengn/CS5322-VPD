@@ -36,3 +36,9 @@ CREATE USER chris IDENTIFIED BY chris;
 CREATE USER steve IDENTIFIED BY steve;
 
 GRANT CREATE SESSION, CONNECT, RESOURCE TO hengd, sean, hugh, chris, steve;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON app_admin.users TO hengd, sean, hugh, chris, steve;
+GRANT SELECT, INSERT, UPDATE, DELETE ON app_admin.appointments TO hengd, sean, hugh, chris, steve;
+GRANT SELECT, INSERT, UPDATE, DELETE ON app_admin.consultations TO hengd, sean, hugh, chris, steve;
+GRANT SELECT, INSERT, UPDATE, DELETE ON app_admin.payments TO hengd, sean, hugh, chris, steve;
+GRANT SELECT, INSERT, UPDATE, DELETE ON app_admin.records TO hengd, sean, hugh, chris, steve;
