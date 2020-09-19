@@ -5,17 +5,17 @@ END;
 
 CREATE OR REPLACE package body app_pkg is
     PROCEDURE set_app_ctx AS
-        user_name VARCHAR(80);
-        user_role VARCHAR(12);
+        v_user_name VARCHAR(80);
+        v_user_role VARCHAR(12);
     BEGIN
-        user_name := SYS_CONTEXT('userenv', 'SESSION_USER');
-        DBMS_SESSION.SET_CONTEXT('app_ctx', 'user_name', user_name);
+        v_user_name := SYS_CONTEXT('userenv', 'SESSION_USER');
+        DBMS_SESSION.SET_CONTEXT('app_ctx', 'user_name', v_user_name);
 
-        IF user_name = 'APP_ADMIN' THEN
+        IF v_user_name = 'APP_ADMIN' THEN
             DBMS_SESSION.SET_CONTEXT('app_ctx', 'user_role', 'admin');
         ELSE
-            SELECT role_type INTO user_role FROM users WHERE USER_NAME = user_name;
-            DBMS_SESSION.SET_CONTEXT('app_ctx', 'user_role', user_role);
+            SELECT role_type INTO v_user_role FROM app_admin.users WHERE USER_NAME = v_user_name;
+            DBMS_SESSION.SET_CONTEXT('app_ctx', 'user_role', v_user_role);
         END IF;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN NULL;
