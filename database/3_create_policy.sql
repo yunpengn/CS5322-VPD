@@ -21,7 +21,7 @@ END;
 -- Defines application context.
 CREATE OR REPLACE context app_ctx USING app_pkg;
 
--- Defines trigger.
+-- Defines user login trigger.
 CREATE OR REPLACE TRIGGER logon_set_ctx AFTER LOGON ON DATABASE
 BEGIN
     app_pkg.set_app_ctx();
