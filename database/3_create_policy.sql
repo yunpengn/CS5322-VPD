@@ -41,7 +41,7 @@ BEGIN
     IF    user_role = 'admin'        THEN
         cond := '';
     ELSIF user_role = 'patient'      THEN
-        cond := 'user_name = SYS_CONTEXT("app_ctx", "user_name")';
+        cond := 'user_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
     ELSIF user_role = 'doctor'       THEN
         cond := '';
     ELSIF user_role = 'receptionist' THEN
