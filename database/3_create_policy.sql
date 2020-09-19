@@ -39,17 +39,17 @@ BEGIN
     user_role := SYS_CONTEXT('app_ctx', 'user_role');
 
     IF    user_role = 'admin'        THEN
-        cond = '';
+        cond := '';
     ELSIF user_role = 'patient'      THEN
-        cond = 'user_name = SYS_CONTEXT("app_ctx", "user_name")';
+        cond := 'user_name = SYS_CONTEXT("app_ctx", "user_name")';
     ELSIF user_role = 'doctor'       THEN
-        cond = '';
+        cond := '';
     ELSIF user_role = 'receptionist' THEN
-        cond = '';
+        cond := '';
     ELSIF user_role = 'cashier'      THEN
-        cond = '';
+        cond := '';
     ELSE
-        cond = '1 = 2';
+        cond := '1 = 2';
     END IF;
 
     RETURN cond;
