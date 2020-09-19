@@ -33,7 +33,7 @@ END;
 
 -- Defines functions.
 CREATE OR REPLACE FUNCTION restrict_users(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
-    cond VARCHAR2(100);
+    cond VARCHAR2(200);
     user_role VARCHAR(12);
 BEGIN
     user_role := SYS_CONTEXT('app_ctx', 'user_role');
