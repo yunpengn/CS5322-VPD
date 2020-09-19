@@ -49,7 +49,7 @@ BEGIN
     ELSIF user_role = 'cashier'      THEN
         cond := '';
     ELSE
-        cond := '1 = 2';
+        cond := 'user_name = SYS_CONTEXT("userenv", "SESSION_USER")';
     END IF;
 
     RETURN cond;
