@@ -133,6 +133,25 @@ BEGIN
     RETURN cond;
 END restrict_consultations_internal_notes;
 
+CREATE OR REPLACE FUNCTION restrict_payments(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(200);
+    user_role VARCHAR(12);
+BEGIN
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
+
+    IF    user_role = 'admin'        THEN
+        cond := '';
+    ELSIF user_role = 'patient'      THEN
+        cond := 'consultation_id IN (SELECT id FROM app_admin.consultations WHERE patient_name = SYS_CONTEXT(''app_ctx'', ''user_name''))';
+    ELSIF user_role = 'cashier'      THEN
+        cond := 'cashier_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
+    ELSE
+        cond := '1 = 2';
+    END IF;
+
+    RETURN cond;
+END restrict_payments;
+
 -- Attaches policies.
 BEGIN
     DBMS_RLS.ADD_POLICY(
@@ -170,5 +189,12 @@ BEGIN
         policy_function => 'restrict_consultations',
         sec_relevant_cols => 'internal_notes',
         sec_relevant_cols_opt => dbms_rls.all_rows,
+        update_check    => true);
+
+    DBMS_RLS.ADD_POLICY(
+        object_schema   => 'app_admin',
+        object_name     => 'payments',
+        policy_name     => 'policy_restrict_payments',
+        policy_function => 'restrict_payments',
         update_check    => true);
 END;
