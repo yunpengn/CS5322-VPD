@@ -29,3 +29,11 @@ VALUES (1, 'X-ray', 'Healthy lungs');
 COMMIT;
 
 -- Adds the corresponding database users.
+CREATE USER hengd IDENTIFIED BY hengd;
+CREATE USER sean  IDENTIFIED BY sean;
+CREATE USER hugh  IDENTIFIED BY hugh;
+CREATE USER chris IDENTIFIED BY chris;
+CREATE USER steve IDENTIFIED BY steve;
+
+GRANT CREATE SESSION TO hengd, sean, hugh, chris, steve;
+GRANT CONNECT, RESOURCE TO hengd, sean, hugh, chris, steve;
