@@ -11,7 +11,7 @@ CREATE OR REPLACE package body app_pkg is
         v_user_name := LOWER(SYS_CONTEXT('userenv', 'SESSION_USER'));
         DBMS_SESSION.SET_CONTEXT('app_ctx', 'user_name', v_user_name);
 
-        IF v_user_name = 'APP_ADMIN' THEN
+        IF v_user_name = 'app_admin' THEN
             DBMS_SESSION.SET_CONTEXT('app_ctx', 'user_role', 'admin');
         ELSE
             SELECT role_type INTO v_user_role FROM app_admin.users WHERE USER_NAME = v_user_name;
@@ -55,6 +55,25 @@ BEGIN
     RETURN cond;
 END restrict_users;
 
+CREATE OR REPLACE FUNCTION restrict_records(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(200);
+    user_role VARCHAR(12);
+BEGIN
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
+
+    IF    user_role = 'admin'        THEN
+        cond := '';
+    ELSIF user_role = 'patient'      THEN
+        cond := 'consultation_id IN (SELECT id FROM consultations WHERE patient_name = SYS_CONTEXT(''app_ctx'', ''user_name''))';
+    ELSIF user_role = 'doctor'       THEN
+        cond := 'consultation_id IN (SELECT id FROM consultations WHERE doctor_name = SYS_CONTEXT(''app_ctx'', ''user_name''))';
+    ELSE
+        cond := '1 = 2';
+    END IF;
+
+    RETURN cond;
+END restrict_records;
+
 -- Attaches policies.
 BEGIN
     DBMS_RLS.ADD_POLICY(
@@ -62,5 +81,12 @@ BEGIN
         object_name     => 'users',
         policy_name     => 'policy_restrict_users',
         policy_function => 'restrict_users',
+        update_check    => true);
+
+    DBMS_RLS.ADD_POLICY(
+        object_schema   => 'app_admin',
+        object_name     => 'records',
+        policy_name     => 'policy_restrict_records',
+        policy_function => 'restrict_records',
         update_check    => true);
 END;
