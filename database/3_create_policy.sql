@@ -28,8 +28,19 @@ BEGIN
 END;
 
 -- Defines functions.
+CREATE OR REPLACE FUNCTION restrict_users(v_schema IN VARCHAR2, v_obj IN VARCHAR2)
+    RETURN VARCHAR2 AS cond VARCHAR2(100);
+BEGIN
+    cond := 'user_name = SYS_CONTEXT("app_ctx", "user_name")';
+    RETURN cond;
+END restrict_users;
 
 -- Attaches policies.
 BEGIN
-
-end;
+    DBMS_RLS.ADD_POLICY(
+        object_schema   => 'app_admin',
+        object_name     => 'users',
+        policy_name     => 'policy_restrict_users',
+        policy_function => 'restrict_users',
+        update_check    => true);
+END;
