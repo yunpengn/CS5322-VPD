@@ -35,15 +35,15 @@ END;
 CREATE OR REPLACE FUNCTION restrict_users(v_schema IN VARCHAR2, v_obj IN VARCHAR2)
     RETURN VARCHAR2 AS cond VARCHAR2(100);
 BEGIN
-    IF    SYS_CONTEXT('app_ctx', 'user_role') = 'admin' THEN
+    IF    SYS_CONTEXT('app_ctx', 'user_role') = 'admin'        THEN
         cond = '';
-    ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'patient' THEN
+    ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'patient'      THEN
         cond = '';
-    ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'doctor' THEN
+    ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'doctor'       THEN
         cond = '';
     ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'receptionist' THEN
         cond = '';
-    ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'cashier' THEN
+    ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'cashier'      THEN
         cond = '';
     ELSE
         cond = 'user_name = SYS_CONTEXT("app_ctx", "user_name")';
