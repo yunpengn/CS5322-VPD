@@ -62,5 +62,5 @@ BEGIN
         object_name     => 'users',
         policy_name     => 'policy_restrict_users',
         policy_function => 'restrict_users',
-        statement_types => 'select,insert,update,delete');
+        statement_types => 'select, insert, update, delete');
 END;
