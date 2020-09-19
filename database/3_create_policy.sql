@@ -32,18 +32,21 @@ BEGIN
 END;
 
 -- Defines functions.
-CREATE OR REPLACE FUNCTION restrict_users(v_schema IN VARCHAR2, v_obj IN VARCHAR2)
-    RETURN VARCHAR2 AS cond VARCHAR2(100);
+CREATE OR REPLACE FUNCTION restrict_users(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(100);
+    user_role VARCHAR(12);
 BEGIN
-    IF    SYS_CONTEXT('app_ctx', 'user_role') = 'admin'        THEN
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
+
+    IF    user_role = 'admin'        THEN
         cond = '';
-    ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'patient'      THEN
+    ELSIF user_role = 'patient'      THEN
         cond = 'user_name = SYS_CONTEXT("app_ctx", "user_name")';
-    ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'doctor'       THEN
+    ELSIF user_role = 'doctor'       THEN
         cond = '';
-    ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'receptionist' THEN
+    ELSIF user_role = 'receptionist' THEN
         cond = '';
-    ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'cashier'      THEN
+    ELSIF user_role = 'cashier'      THEN
         cond = '';
     ELSE
         cond = '1 = 2';
