@@ -41,9 +41,9 @@ BEGIN
     IF    user_role = 'admin'        THEN
         cond := '';
     ELSIF user_role = 'patient'      THEN
-        cond := 'user_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
+        cond := 'user_name = SYS_CONTEXT(''app_ctx'', ''user_name'') OR user_name IN (SELECT doctor_name FROM app_admin.consultations WHERE patient_name = SYS_CONTEXT(''app_ctx'', ''user_name''))';
     ELSIF user_role = 'doctor'       THEN
-        cond := 'user_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
+        cond := 'user_name = SYS_CONTEXT(''app_ctx'', ''user_name'') OR user_name IN (SELECT patient_name FROM app_admin.consultations WHERE doctor_name = SYS_CONTEXT(''app_ctx'', ''user_name''))';
     ELSIF user_role = 'receptionist' THEN
         cond := 'user_name = SYS_CONTEXT(''app_ctx'', ''user_name'') OR role_type IN (''patient'', ''doctor'')';
     ELSIF user_role = 'cashier'      THEN
