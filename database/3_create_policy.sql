@@ -38,7 +38,7 @@ BEGIN
     IF    SYS_CONTEXT('app_ctx', 'user_role') = 'admin'        THEN
         cond = '';
     ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'patient'      THEN
-        cond = '';
+        cond = 'user_name = SYS_CONTEXT("app_ctx", "user_name")';
     ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'doctor'       THEN
         cond = '';
     ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'receptionist' THEN
@@ -46,7 +46,7 @@ BEGIN
     ELSIF SYS_CONTEXT('app_ctx', 'user_role') = 'cashier'      THEN
         cond = '';
     ELSE
-        cond = 'user_name = SYS_CONTEXT("app_ctx", "user_name")';
+        cond = '1 = 2';
     END IF;
 
     RETURN cond;
