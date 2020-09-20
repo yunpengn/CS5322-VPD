@@ -31,6 +31,21 @@ BEGIN
     RETURN cond;
 END update_users_columns;
 
+CREATE OR REPLACE FUNCTION update_appointments(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(200);
+    user_role VARCHAR(12);
+BEGIN
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
+
+    IF    user_role = 'admin'        THEN
+        cond := '';
+    ELSE
+        cond := '1 = 2';
+    END IF;
+
+    RETURN cond;
+END update_appointments;
+
 -- Attaches policies.
 BEGIN
 
@@ -50,5 +65,13 @@ BEGIN
             sec_relevant_cols => 'user_name,role_type,created_at,updated_at',
             statement_types   => 'update',
             update_check      => true);
+
+    DBMS_RLS.ADD_POLICY(
+            object_schema   => 'app_admin',
+            object_name     => 'appointments',
+            policy_name     => 'policy_update_appointments',
+            policy_function => 'update_appointments',
+            statement_types => 'update',
+            update_check    => true);
 
 END;
