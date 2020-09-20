@@ -20,8 +20,8 @@ CREATE OR REPLACE FUNCTION restrict_records_insert(v_schema IN VARCHAR2, v_obj I
 BEGIN
     user_role := SYS_CONTEXT('app_ctx', 'user_role');
 
-    IF user_role = 'admin' THEN
-        cond := '';
+    IF user_role = 'doctor' THEN
+        cond := 'doctor_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
     ELSE
         cond := '1 = 2';
     END IF;
@@ -36,7 +36,7 @@ BEGIN
     user_role := SYS_CONTEXT('app_ctx', 'user_role');
 
     IF user_role = 'receptionist' THEN
-        cond := 'time >= CURRENT_TIMESTAMP';
+        cond := 'time >= CURRENT_TIMESTAMP and receptionist_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
     ELSE
         cond := '1 = 2';
     END IF;
@@ -51,7 +51,7 @@ BEGIN
     user_role := SYS_CONTEXT('app_ctx', 'user_role');
 
     IF user_role = 'receptionist' THEN
-        cond := 'time_start >= CURRENT_TIMESTAMP';
+        cond := 'time_start >= CURRENT_TIMESTAMP and receptionist_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
     ELSE
         cond := '1 = 2';
     END IF;
