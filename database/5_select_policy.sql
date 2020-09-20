@@ -121,33 +121,35 @@ END restrict_payments;
 
 -- Attaches policies.
 BEGIN
+    -- DBMS_RLS.DROP_POLICY('app_admin', 'users', 'policy_restrict_users');
+
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
             object_name     => 'users',
             policy_name     => 'policy_restrict_users',
             policy_function => 'restrict_users',
-            update_check    => true);
+            statement_types => 'select');
 
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
             object_name     => 'records',
             policy_name     => 'policy_restrict_records',
             policy_function => 'restrict_records',
-            update_check    => true);
+            statement_types => 'select');
 
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
             object_name     => 'appointments',
             policy_name     => 'policy_restrict_appointments',
             policy_function => 'restrict_appointments',
-            update_check    => true);
+            statement_types => 'select');
 
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
             object_name     => 'consultations',
             policy_name     => 'policy_restrict_consultations',
             policy_function => 'restrict_consultations',
-            update_check    => true);
+            statement_types => 'select');
 
     DBMS_RLS.ADD_POLICY(
             object_schema         => 'app_admin',
@@ -156,12 +158,12 @@ BEGIN
             policy_function       => 'restrict_consultations_internal_notes',
             sec_relevant_cols     => 'internal_notes',
             sec_relevant_cols_opt => dbms_rls.all_rows,
-            update_check          => true);
+            statement_types => 'select');
 
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
             object_name     => 'payments',
             policy_name     => 'policy_restrict_payments',
             policy_function => 'restrict_payments',
-            update_check    => true);
+            statement_types => 'select');
 END;
