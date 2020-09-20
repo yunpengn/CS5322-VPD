@@ -11,10 +11,6 @@ BEGIN
     IF SYS_CONTEXT('app_ctx', 'user_role') <> 'doctor' THEN
         RAISE_APPLICATION_ERROR(40001, 'Only doctor can insert to records tables');
     END IF;
-
-    IF SYS_CONTEXT('app_ctx', 'user_name') <> :NEW.DOCTOR_NAME THEN
-        RAISE_APPLICATION_ERROR(40002, 'doctor_name should be his/her own name');
-    END IF;
 END;
 
 CREATE OR REPLACE trigger check_appointments_insert BEFORE insert ON appointments FOR EACH ROW
