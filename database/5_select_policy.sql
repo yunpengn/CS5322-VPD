@@ -1,5 +1,5 @@
 -- Defines functions.
-CREATE OR REPLACE FUNCTION restrict_users(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+CREATE OR REPLACE FUNCTION select_users(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
     cond VARCHAR2(200);
     user_role VARCHAR(12);
 BEGIN
@@ -20,9 +20,69 @@ BEGIN
     END IF;
 
     RETURN cond;
-END restrict_users;
+END select_users;
 
-CREATE OR REPLACE FUNCTION restrict_records(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+CREATE OR REPLACE FUNCTION select_users_patient(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(100);
+    user_role VARCHAR(12);
+BEGIN
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
+
+    IF user_role = 'patient'       THEN
+        cond := 'user_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
+    ELSE
+        cond := '';
+    END IF;
+
+    RETURN cond;
+END select_users_patient;
+
+CREATE OR REPLACE FUNCTION select_users_doctor(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(100);
+    user_role VARCHAR(12);
+BEGIN
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
+
+    IF user_role = 'doctor'       THEN
+        cond := 'user_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
+    ELSE
+        cond := '';
+    END IF;
+
+    RETURN cond;
+END select_users_doctor;
+
+CREATE OR REPLACE FUNCTION select_users_receptionist(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(100);
+    user_role VARCHAR(12);
+BEGIN
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
+
+    IF user_role = 'receptionist'       THEN
+        cond := 'user_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
+    ELSE
+        cond := '';
+    END IF;
+
+    RETURN cond;
+END select_users_receptionist;
+
+CREATE OR REPLACE FUNCTION select_users_cu(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(100);
+    user_role VARCHAR(12);
+BEGIN
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
+
+    IF user_role = 'admin'       THEN
+        cond := '';
+    ELSE
+        cond := 'user_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
+    END IF;
+
+    RETURN cond;
+END select_users_cu;
+
+CREATE OR REPLACE FUNCTION select_records(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
     cond VARCHAR2(200);
     user_role VARCHAR(12);
 BEGIN
@@ -39,9 +99,9 @@ BEGIN
     END IF;
 
     RETURN cond;
-END restrict_records;
+END select_records;
 
-CREATE OR REPLACE FUNCTION restrict_appointments(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+CREATE OR REPLACE FUNCTION select_appointments(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
     cond VARCHAR2(100);
     user_role VARCHAR(12);
 BEGIN
@@ -60,9 +120,9 @@ BEGIN
     END IF;
 
     RETURN cond;
-END restrict_appointments;
+END select_appointments;
 
-CREATE OR REPLACE FUNCTION restrict_consultations(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+CREATE OR REPLACE FUNCTION select_consultations(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
     cond VARCHAR2(100);
     user_role VARCHAR(12);
 BEGIN
@@ -81,9 +141,9 @@ BEGIN
     END IF;
 
     RETURN cond;
-END restrict_consultations;
+END select_consultations;
 
-CREATE OR REPLACE FUNCTION restrict_consultations_internal_notes(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+CREATE OR REPLACE FUNCTION select_consultations_internal_notes(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
     cond VARCHAR2(100);
     user_role VARCHAR(12);
 BEGIN
@@ -98,9 +158,9 @@ BEGIN
     END IF;
 
     RETURN cond;
-END restrict_consultations_internal_notes;
+END select_consultations_internal_notes;
 
-CREATE OR REPLACE FUNCTION restrict_payments(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+CREATE OR REPLACE FUNCTION select_payments(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
     cond VARCHAR2(200);
     user_role VARCHAR(12);
 BEGIN
@@ -117,45 +177,81 @@ BEGIN
     END IF;
 
     RETURN cond;
-END restrict_payments;
+END select_payments;
 
 -- Attaches policies.
 BEGIN
-    -- DBMS_RLS.DROP_POLICY('app_admin', 'users', 'policy_restrict_users');
+    -- DBMS_RLS.DROP_POLICY('app_admin', 'users', 'policy_select_users');
 
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
             object_name     => 'users',
-            policy_name     => 'policy_restrict_users',
-            policy_function => 'restrict_users',
+            policy_name     => 'policy_select_users',
+            policy_function => 'select_users',
+            statement_types => 'select');
+
+    DBMS_RLS.ADD_POLICY(
+            object_schema         => 'app_admin',
+            object_name           => 'users',
+            policy_name           => 'policy_select_users_patient',
+            policy_function       => 'select_users_patient',
+            sec_relevant_cols     => 'nric, dob, phone, address',
+            sec_relevant_cols_opt => dbms_rls.all_rows,
+            statement_types => 'select');
+
+    DBMS_RLS.ADD_POLICY(
+            object_schema         => 'app_admin',
+            object_name           => 'users',
+            policy_name           => 'policy_select_users_doctor',
+            policy_function       => 'select_users_doctor',
+            sec_relevant_cols     => 'nric, phone, address',
+            sec_relevant_cols_opt => dbms_rls.all_rows,
+            statement_types => 'select');
+
+    DBMS_RLS.ADD_POLICY(
+            object_schema         => 'app_admin',
+            object_name           => 'users',
+            policy_name           => 'policy_select_users_receptionist',
+            policy_function       => 'select_users_receptionist',
+            sec_relevant_cols     => 'address',
+            sec_relevant_cols_opt => dbms_rls.all_rows,
+            statement_types => 'select');
+
+    DBMS_RLS.ADD_POLICY(
+            object_schema         => 'app_admin',
+            object_name           => 'users',
+            policy_name           => 'policy_select_users_cu',
+            policy_function       => 'select_users_cu',
+            sec_relevant_cols     => 'created_at, updated_at',
+            sec_relevant_cols_opt => dbms_rls.all_rows,
             statement_types => 'select');
 
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
             object_name     => 'records',
-            policy_name     => 'policy_restrict_records',
-            policy_function => 'restrict_records',
+            policy_name     => 'policy_select_records',
+            policy_function => 'select_records',
             statement_types => 'select');
 
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
             object_name     => 'appointments',
-            policy_name     => 'policy_restrict_appointments',
-            policy_function => 'restrict_appointments',
+            policy_name     => 'policy_select_appointments',
+            policy_function => 'select_appointments',
             statement_types => 'select');
 
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
             object_name     => 'consultations',
-            policy_name     => 'policy_restrict_consultations',
-            policy_function => 'restrict_consultations',
+            policy_name     => 'policy_select_consultations',
+            policy_function => 'select_consultations',
             statement_types => 'select');
 
     DBMS_RLS.ADD_POLICY(
             object_schema         => 'app_admin',
             object_name           => 'consultations',
-            policy_name           => 'policy_restrict_consultations_internal_notes',
-            policy_function       => 'restrict_consultations_internal_notes',
+            policy_name           => 'policy_select_consultations_internal_notes',
+            policy_function       => 'select_consultations_internal_notes',
             sec_relevant_cols     => 'internal_notes',
             sec_relevant_cols_opt => dbms_rls.all_rows,
             statement_types => 'select');
@@ -163,7 +259,7 @@ BEGIN
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
             object_name     => 'payments',
-            policy_name     => 'policy_restrict_payments',
-            policy_function => 'restrict_payments',
+            policy_name     => 'policy_select_payments',
+            policy_function => 'select_payments',
             statement_types => 'select');
 END;
