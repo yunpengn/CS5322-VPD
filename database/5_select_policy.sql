@@ -152,8 +152,8 @@ BEGIN
     DBMS_RLS.ADD_POLICY(
             object_schema         => 'app_admin',
             object_name           => 'consultations',
-            policy_name           => 'policy_restrict_consultations',
-            policy_function       => 'restrict_consultations',
+            policy_name           => 'policy_restrict_consultations_internal_notes',
+            policy_function       => 'restrict_consultations_internal_notes',
             sec_relevant_cols     => 'internal_notes',
             sec_relevant_cols_opt => dbms_rls.all_rows,
             update_check          => true);
