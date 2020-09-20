@@ -9,7 +9,7 @@ BEGIN
     RETURN '1 = 2';
 END restrict_records_delete;
 
-CREATE OR REPLACE FUNCTION restrict_appointments(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+CREATE OR REPLACE FUNCTION restrict_appointments_delete(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
     cond VARCHAR2(100);
     user_role VARCHAR(12);
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
     END IF;
 
     RETURN cond;
-END restrict_appointments;
+END restrict_appointments_delete;
 
 CREATE OR REPLACE FUNCTION restrict_consultations_delete(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
 BEGIN
