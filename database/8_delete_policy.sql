@@ -59,7 +59,7 @@ BEGIN
 
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
-            object_name     => 'appointments',
+            object_name     => 'consultations',
             policy_name     => 'policy_restrict_consultations_delete',
             policy_function => 'restrict_consultations_delete',
             statement_types => 'delete');
