@@ -1,5 +1,3 @@
--- todo: handle the "updated_at" field as "ON UPDATE" clause is not available
-
 -- Creates new tables.
 CREATE TABLE users (
    user_name  VARCHAR(80),
@@ -11,8 +9,6 @@ CREATE TABLE users (
    gender     VARCHAR(6)   NOT NULL,
    phone      CHAR(8),
    address    VARCHAR(100),
-   created_at DATE         DEFAULT CURRENT_TIMESTAMP NOT NULL,
-   updated_at DATE         DEFAULT CURRENT_TIMESTAMP NOT NULL,
    PRIMARY KEY (user_name),
    UNIQUE      (nric, role_type),
    CHECK       (role_type IN ('patient', 'doctor', 'receptionist', 'cashier')),
@@ -25,8 +21,6 @@ CREATE TABLE appointments (
   doctor_name       VARCHAR(80) NOT NULL,
   receptionist_name VARCHAR(80) NOT NULL,
   time              DATE        NOT NULL,
-  created_at        DATE        DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updated_at        DATE        DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (patient_name)      REFERENCES users(user_name),
   FOREIGN KEY (doctor_name)       REFERENCES users(user_name),
@@ -42,8 +36,6 @@ CREATE TABLE consultations (
   time_start        DATE          NOT NULL,
   time_end          DATE,
   internal_notes    VARCHAR(200),
-  created_at        DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updated_at        DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (patient_name)      REFERENCES users(user_name),
   FOREIGN KEY (doctor_name)       REFERENCES users(user_name),
@@ -57,8 +49,6 @@ CREATE TABLE payments (
   consultation_id NUMBER        NOT NULL,
   amount          NUMBER(8,2)   NOT NULL,
   status          VARCHAR(10)   DEFAULT 'unpaid' NOT NULL,
-  created_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updated_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
   UNIQUE      (consultation_id),
   FOREIGN KEY (cashier_name)    REFERENCES users(user_name),
@@ -71,8 +61,6 @@ CREATE TABLE records (
   consultation_id NUMBER        NOT NULL,
   record_type     VARCHAR(10)   NOT NULL,
   results         VARCHAR(200)  NOT NULL,
-  created_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updated_at      DATE          DEFAULT CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (consultation_id) REFERENCES consultations(id),
   CHECK       (record_type IN ('X-ray', 'MRI'))

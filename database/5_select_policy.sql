@@ -67,21 +67,6 @@ BEGIN
     RETURN cond;
 END select_users_receptionist;
 
-CREATE OR REPLACE FUNCTION select_users_cu(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
-    cond VARCHAR2(100);
-    user_role VARCHAR(12);
-BEGIN
-    user_role := SYS_CONTEXT('app_ctx', 'user_role');
-
-    IF user_role = 'admin'       THEN
-        cond := '';
-    ELSE
-        cond := 'user_name = SYS_CONTEXT(''app_ctx'', ''user_name'')';
-    END IF;
-
-    RETURN cond;
-END select_users_cu;
-
 CREATE OR REPLACE FUNCTION select_records(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
     cond VARCHAR2(200);
     user_role VARCHAR(12);
@@ -215,16 +200,7 @@ BEGIN
             policy_function       => 'select_users_receptionist',
             sec_relevant_cols     => 'address',
             sec_relevant_cols_opt => dbms_rls.all_rows,
-            statement_types => 'select');
-
-    DBMS_RLS.ADD_POLICY(
-            object_schema         => 'app_admin',
-            object_name           => 'users',
-            policy_name           => 'policy_select_users_cu',
-            policy_function       => 'select_users_cu',
-            sec_relevant_cols     => 'created_at, updated_at',
-            sec_relevant_cols_opt => dbms_rls.all_rows,
-            statement_types => 'select');
+            statement_types       => 'select');
 
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',

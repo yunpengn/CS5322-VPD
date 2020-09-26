@@ -79,7 +79,7 @@ BEGIN
             object_name       => 'users',
             policy_name       => 'policy_update_users_columns',
             policy_function   => 'update_users_columns',
-            sec_relevant_cols => 'user_name,role_type,created_at,updated_at',
+            sec_relevant_cols => 'user_name,role_type',
             statement_types   => 'update',
             update_check      => true);
 
