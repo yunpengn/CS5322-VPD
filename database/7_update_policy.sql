@@ -21,12 +21,7 @@ CREATE OR REPLACE FUNCTION update_users_columns(v_schema IN VARCHAR2, v_obj IN V
     user_role VARCHAR(12);
 BEGIN
     user_role := SYS_CONTEXT('app_ctx', 'user_role');
-
-    IF    user_role = 'admin' THEN
-        cond := '';
-    ELSE
-        cond := '1 = 2';
-    END IF;
+    cond := '1 = 2';
 
     RETURN cond;
 END update_users_columns;
@@ -126,7 +121,7 @@ BEGIN
             object_name       => 'users',
             policy_name       => 'policy_update_users_columns',
             policy_function   => 'update_users_columns',
-            sec_relevant_cols => 'user_name,role_type',
+            sec_relevant_cols => 'role_type',
             statement_types   => 'update',
             update_check      => true);
 
@@ -151,7 +146,7 @@ BEGIN
             object_name       => 'consultations',
             policy_name       => 'policy_update_consultations_columns',
             policy_function   => 'update_consultations_columns',
-            sec_relevant_cols => 'id,patient_name,doctor_name,receptionist_name,appointment_id,time_start',
+            sec_relevant_cols => 'patient_name,doctor_name,receptionist_name,appointment_id,time_start',
             statement_types   => 'update',
             update_check      => true);
 
