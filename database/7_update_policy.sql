@@ -90,6 +90,21 @@ BEGIN
     RETURN cond;
 END update_payments;
 
+CREATE OR REPLACE FUNCTION update_payments_columns(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(100);
+    user_role VARCHAR(12);
+BEGIN
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
+
+    IF    user_role = 'admin' THEN
+        cond := '';
+    ELSE
+        cond := '1 = 2';
+    END IF;
+
+    RETURN cond;
+END update_payments_columns;
+
 CREATE OR REPLACE FUNCTION update_records(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
     cond VARCHAR2(200);
     user_role VARCHAR(12);
@@ -157,6 +172,15 @@ BEGIN
             policy_function => 'update_payments',
             statement_types => 'update',
             update_check    => true);
+
+    DBMS_RLS.ADD_POLICY(
+            object_schema     => 'app_admin',
+            object_name       => 'payments',
+            policy_name       => 'policy_update_payments_columns',
+            policy_function   => 'update_payments_columns',
+            sec_relevant_cols => 'cashier_name,consultation_id,amount',
+            statement_types   => 'update',
+            update_check      => true);
 
     DBMS_RLS.ADD_POLICY(
             object_schema   => 'app_admin',
