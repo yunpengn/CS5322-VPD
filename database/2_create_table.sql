@@ -1,18 +1,18 @@
 -- Creates new tables.
 CREATE TABLE users (
-   user_name  VARCHAR(80),
-   role_type  VARCHAR(12)  NOT NULL,
-   nric       CHAR(9)      NOT NULL,
-   first_name VARCHAR(80)  NOT NULL,
-   last_name  VARCHAR(80)  NOT NULL,
-   dob        DATE,
-   gender     VARCHAR(6)   NOT NULL,
-   phone      CHAR(8),
-   address    VARCHAR(100),
-   PRIMARY KEY (user_name),
-   UNIQUE      (nric, role_type),
-   CHECK       (role_type IN ('patient', 'doctor', 'receptionist', 'cashier')),
-   CHECK       (gender    IN ('male', 'female'))
+  user_name  VARCHAR(80),
+  role_type  VARCHAR(12)  NOT NULL,
+  nric       CHAR(9)      NOT NULL,
+  first_name VARCHAR(80)  NOT NULL,
+  last_name  VARCHAR(80)  NOT NULL,
+  dob        DATE,
+  gender     VARCHAR(6)   NOT NULL,
+  phone      CHAR(8),
+  address    VARCHAR(100),
+  PRIMARY KEY (user_name),
+  UNIQUE      (nric, role_type),
+  CHECK       (role_type IN ('patient', 'doctor', 'receptionist', 'cashier')),
+  CHECK       (gender    IN ('male', 'female'))
 );
 
 CREATE TABLE appointments (
