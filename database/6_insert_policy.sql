@@ -38,8 +38,8 @@ BEGIN
     RAISE_APPLICATION_ERROR(40007, 'receptionist_name should be his/her own name');
   END IF;
 
-  IF :NEW.TIME < CURRENT_TIMESTAMP THEN
-    RAISE_APPLICATION_ERROR(40008, 'appointment must be in the future');
+  IF :NEW.TIME_START < CURRENT_TIMESTAMP THEN
+    RAISE_APPLICATION_ERROR(40008, 'consultation cannot start in the past');
   END IF;
 END;
 
