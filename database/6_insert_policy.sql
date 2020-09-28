@@ -1,55 +1,124 @@
--- Defines triggers.
-CREATE OR REPLACE trigger check_users_insert BEFORE insert ON users FOR EACH ROW
+-- Defines functions.
+CREATE OR REPLACE FUNCTION insert_users(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(200);
+    user_role VARCHAR(12);
 BEGIN
-  IF SYS_CONTEXT('app_ctx', 'user_role') <> 'admin' THEN
-    RAISE_APPLICATION_ERROR(40000, 'Only admin can insert to users tables');
-  END IF;
-END;
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
 
-CREATE OR REPLACE trigger check_records_insert BEFORE insert ON records FOR EACH ROW
+    IF user_role = 'admin' THEN
+        cond := '';
+    ELSE
+        cond := '1 = 2';
+    END IF;
+
+    RETURN cond;
+END insert_users;
+
+CREATE OR REPLACE FUNCTION insert_records(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(200);
+    user_role VARCHAR(12);
 BEGIN
-  IF SYS_CONTEXT('app_ctx', 'user_role') <> 'doctor' THEN
-    RAISE_APPLICATION_ERROR(40001, 'Only doctor can insert to records tables');
-  END IF;
-END;
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
 
-CREATE OR REPLACE trigger check_appointments_insert BEFORE insert ON appointments FOR EACH ROW
+    IF user_role = 'admin' OR user_role = 'doctor' THEN
+        cond := '';
+    ELSE
+        cond := '1 = 2';
+    END IF;
+
+    RETURN cond;
+END insert_records;
+
+CREATE OR REPLACE FUNCTION insert_appointments(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(200);
+    user_role VARCHAR(12);
 BEGIN
-  IF SYS_CONTEXT('app_ctx', 'user_role') <> 'receptionist' THEN
-    RAISE_APPLICATION_ERROR(40003, 'Only receptionist can insert to appointments tables');
-  END IF;
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
 
-  IF SYS_CONTEXT('app_ctx', 'user_name') <> :NEW.RECEPTIONIST_NAME THEN
-    RAISE_APPLICATION_ERROR(40004, 'receptionist_name should be his/her own name');
-  END IF;
+    IF user_role = 'admin' THEN
+        cond := '';
+    ELSIF user_role = 'receptionist' THEN
+        cond := 'receptionist_name = SYS_CONTEXT(''app_ctx'', ''user_name'') AND time >= CURRENT_TIMESTAMP';
+    ELSE
+        cond := '1 = 2';
+    END IF;
 
-  IF :NEW.TIME < CURRENT_TIMESTAMP THEN
-    RAISE_APPLICATION_ERROR(40005, 'appointment must be in the future');
-  END IF;
-END;
+    RETURN cond;
+END insert_appointments;
 
-CREATE OR REPLACE trigger check_consultations_insert BEFORE insert ON consultations FOR EACH ROW
+CREATE OR REPLACE FUNCTION insert_consultations(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(200);
+    user_role VARCHAR(12);
 BEGIN
-  IF SYS_CONTEXT('app_ctx', 'user_role') <> 'receptionist' THEN
-    RAISE_APPLICATION_ERROR(40006, 'Only receptionist can insert to consultations tables');
-  END IF;
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
 
-  IF SYS_CONTEXT('app_ctx', 'user_name') <> :NEW.RECEPTIONIST_NAME THEN
-    RAISE_APPLICATION_ERROR(40007, 'receptionist_name should be his/her own name');
-  END IF;
+    IF user_role = 'admin' THEN
+        cond := '';
+    ELSIF user_role = 'receptionist' THEN
+        cond := 'receptionist_name = SYS_CONTEXT(''app_ctx'', ''user_name'') AND time_start >= CURRENT_TIMESTAMP';
+    ELSE
+        cond := '1 = 2';
+    END IF;
 
-  IF :NEW.TIME_START < CURRENT_TIMESTAMP THEN
-    RAISE_APPLICATION_ERROR(40008, 'consultation cannot start in the past');
-  END IF;
-END;
+    RETURN cond;
+END insert_consultations;
 
-CREATE OR REPLACE trigger check_payments_insert BEFORE insert ON payments FOR EACH ROW
+CREATE OR REPLACE FUNCTION insert_payments(v_schema IN VARCHAR2, v_obj IN VARCHAR2) RETURN VARCHAR2 AS
+    cond VARCHAR2(200);
+    user_role VARCHAR(12);
 BEGIN
-  IF SYS_CONTEXT('app_ctx', 'user_role') <> 'doctor' THEN
-    RAISE_APPLICATION_ERROR(40009, 'Only doctor can insert to payments tables');
-  END IF;
+    user_role := SYS_CONTEXT('app_ctx', 'user_role');
 
-  IF :NEW.STATUS <> 'unpaid' THEN
-    RAISE_APPLICATION_ERROR(40005, 'the initial status of a payment must be unpaid');
-  END IF;
+    IF user_role = 'admin' THEN
+        cond := '';
+    ELSIF user_role = 'doctor' THEN
+        cond := 'status = ''unpaid''';
+    ELSE
+        cond := '1 = 2';
+    END IF;
+
+    RETURN cond;
+END insert_payments;
+
+-- Attaches policies.
+BEGIN
+    DBMS_RLS.ADD_POLICY(
+        object_schema   => 'app_admin',
+        object_name     => 'users',
+        policy_name     => 'policy_insert_users',
+        policy_function => 'insert_users',
+        statement_types => 'insert',
+        update_check    => true);
+
+    DBMS_RLS.ADD_POLICY(
+        object_schema   => 'app_admin',
+        object_name     => 'records',
+        policy_name     => 'policy_insert_records',
+        policy_function => 'insert_records',
+        statement_types => 'insert',
+        update_check    => true);
+
+    DBMS_RLS.ADD_POLICY(
+        object_schema   => 'app_admin',
+        object_name     => 'appointments',
+        policy_name     => 'policy_insert_appointments',
+        policy_function => 'insert_appointments',
+        statement_types => 'insert',
+        update_check    => true);
+
+    DBMS_RLS.ADD_POLICY(
+        object_schema   => 'app_admin',
+        object_name     => 'consultations',
+        policy_name     => 'policy_insert_consultations',
+        policy_function => 'insert_consultations',
+        statement_types => 'insert',
+        update_check    => true);
+
+    DBMS_RLS.ADD_POLICY(
+        object_schema   => 'app_admin',
+        object_name     => 'payments',
+        policy_name     => 'policy_insert_payments',
+        policy_function => 'insert_payments',
+        statement_types => 'insert',
+        update_check    => true);
 END;
