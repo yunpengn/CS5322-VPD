@@ -177,7 +177,7 @@ BEGIN
           object_name       => 'payments',
           policy_name       => 'policy_update_payments_columns',
           policy_function   => 'update_payments_columns',
-          sec_relevant_cols => 'cashier_name,consultation_id,amount',
+          sec_relevant_cols => 'cashier_name,amount',
           statement_types   => 'update',
           update_check      => true);
 
